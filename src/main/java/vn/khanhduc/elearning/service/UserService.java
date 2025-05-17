@@ -17,22 +17,13 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserCreationResponse createUser(UserCreationRequest request) {
-        // 1. Kiểm tra email đã tồn tại chưa
         Optional<User> byEmail = userRepository.findByEmail(request.getEmail());
         if(byEmail.isPresent()) {
             throw new RuntimeException("Email existed");
         }
-
-//        User user = new User();
-//        user.setEmail(request.getEmail());
-//        user.setFirstName(request.getFirstName());
-//        user.setLastName(request.getLastName());
-//        user.setPassword(request.getPassword());
-
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
         User user = User.builder()
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
