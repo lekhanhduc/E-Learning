@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import vn.khanhduc.elearning.dto.request.UserCreationRequest;
 import vn.khanhduc.elearning.dto.response.UserCreationResponse;
 import vn.khanhduc.elearning.dto.response.UserDetailResponse;
-import vn.khanhduc.elearning.entity.User;
 import vn.khanhduc.elearning.service.UserService;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<User> getAllUsers(){
+    public List<UserDetailResponse> getAllUsers(){
         return userService.getAllUsers();
     }
 

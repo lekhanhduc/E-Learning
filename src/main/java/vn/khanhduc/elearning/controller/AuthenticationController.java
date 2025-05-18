@@ -16,7 +16,6 @@ public class AuthenticationController {
 
     @PostMapping("/auth/login")
     public SignInResponse login(@RequestBody SignInRequest request) {
-        System.out.println(request);
         return authenticationService.login(request);
     }
 
