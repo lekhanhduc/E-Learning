@@ -2,26 +2,35 @@ package vn.khanhduc.elearning.service;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
+import io.micrometer.common.util.StringUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
+import vn.khanhduc.elearning.entity.InvalidtedToken;
 import vn.khanhduc.elearning.entity.User;
+import vn.khanhduc.elearning.repository.InvalidtedTokenRepository;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
     @Value("${jwt.secret-key}")
     private String secretKey;
 
+    private final InvalidtedTokenRepository invalidtedTokenRepository;
+
     public String generateAccessToken(User user) {
 
-        Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = user.getAuthorities(); // role : {USER} ==> {USER, ADMIN}
 
         List<String> authorityName = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
@@ -35,6 +44,7 @@ public class JwtService {
                 .issueTime(new Date())
                 .claim("authorities", authorityName)
                 .expirationTime(new Date(Instant.now().plus(30, ChronoUnit.MINUTES).toEpochMilli()))
+                .jwtID(UUID.randomUUID().toString())
                 .build();
 
         Payload payload = new Payload(claimsSet.toJSONObject());
@@ -56,6 +66,7 @@ public class JwtService {
                 .subject(user.getEmail())
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(14, ChronoUnit.DAYS).toEpochMilli()))
+                .jwtID(UUID.randomUUID().toString())
                 .build();
 
         var payload = new Payload(claimsSet.toJSONObject());
@@ -67,6 +78,24 @@ public class JwtService {
         } catch (JOSEException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean verifyToken(String token) throws ParseException, JOSEException {
+        if(StringUtils.isBlank(token)) {
+            return false;
+        }
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        Optional<InvalidtedToken> invalidtedToken = invalidtedTokenRepository.findById(signedJWT.getJWTClaimsSet().getJWTID());
+        if(invalidtedToken.isPresent()) {
+            return false;
+        }
+
+        if(signedJWT.getJWTClaimsSet().getExpirationTime().before(new Date())) {
+            return false;
+        }
+
+        return signedJWT.verify(new MACVerifier(secretKey.getBytes(StandardCharsets.UTF_8)));
     }
 
 }
