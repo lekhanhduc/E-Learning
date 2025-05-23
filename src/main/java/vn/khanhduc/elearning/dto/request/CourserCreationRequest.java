@@ -1,11 +1,10 @@
 package vn.khanhduc.elearning.dto.request;
 
 import lombok.Getter;
-
 import java.math.BigDecimal;
 
 @Getter
-public class CourseCreationRequest {
+public class CourserCreationRequest {
     private String name;
     private String description;
     private String courseCover;

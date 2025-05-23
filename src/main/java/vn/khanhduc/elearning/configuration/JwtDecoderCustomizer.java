@@ -9,9 +9,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Component;
-import vn.khanhduc.elearning.service.AuthenticationService;
 import vn.khanhduc.elearning.service.JwtService;
-
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;

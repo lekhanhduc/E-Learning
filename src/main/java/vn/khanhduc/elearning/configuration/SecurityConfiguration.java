@@ -32,15 +32,13 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(request -> request
-                .requestMatchers("/api/v1/users", "/auth/**").permitAll()
+                .requestMatchers("/api/v1/users", "/auth/**", "/courses/fetch-all").permitAll()
                 .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
         http.oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwtConfigurer -> jwtConfigurer
                         .decoder(decoderCustomizer).jwtAuthenticationConverter(converter())));
-
         return http.build();
     }
 

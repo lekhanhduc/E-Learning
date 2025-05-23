@@ -1,5 +1,6 @@
 package vn.khanhduc.elearning.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public SignInResponse login(@RequestBody SignInRequest request) {
+    public SignInResponse login(@RequestBody @Valid SignInRequest request) {
         return authenticationService.login(request);
     }
 

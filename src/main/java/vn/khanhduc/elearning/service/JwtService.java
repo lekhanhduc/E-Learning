@@ -29,9 +29,7 @@ public class JwtService {
     private final InvalidtedTokenRepository invalidtedTokenRepository;
 
     public String generateAccessToken(User user) {
-
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities(); // role : {USER} ==> {USER, ADMIN}
-
         List<String> authorityName = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
@@ -86,15 +84,15 @@ public class JwtService {
         }
         SignedJWT signedJWT = SignedJWT.parse(token);
 
-        Optional<InvalidtedToken> invalidtedToken = invalidtedTokenRepository.findById(signedJWT.getJWTClaimsSet().getJWTID());
-        if(invalidtedToken.isPresent()) {
-            return false;
-        }
-
         if(signedJWT.getJWTClaimsSet().getExpirationTime().before(new Date())) {
             return false;
         }
 
+        Optional<InvalidtedToken> invalidtedToken = invalidtedTokenRepository.findById(signedJWT.getJWTClaimsSet().getJWTID());
+
+        if(invalidtedToken.isPresent()) {
+            return false;
+        }
         return signedJWT.verify(new MACVerifier(secretKey.getBytes(StandardCharsets.UTF_8)));
     }
 
