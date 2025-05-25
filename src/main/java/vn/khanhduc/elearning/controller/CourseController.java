@@ -7,6 +7,7 @@ import vn.khanhduc.elearning.dto.request.CourseCreationRequest;
 import vn.khanhduc.elearning.dto.response.ApiResponse;
 import vn.khanhduc.elearning.dto.response.CourseCreationResponse;
 import vn.khanhduc.elearning.dto.response.CourseDetailResponse;
+import vn.khanhduc.elearning.dto.response.PageResponse;
 import vn.khanhduc.elearning.service.CourseService;
 import java.util.List;
 
@@ -23,10 +24,13 @@ public class CourseController {
     }
 
     @GetMapping("/fetch-all")
-    public ApiResponse<List<CourseDetailResponse>> getAllCourses() {
-        return ApiResponse.<List<CourseDetailResponse>>builder()
+    public ApiResponse<PageResponse<CourseDetailResponse>> getAllCourses(
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "10") int size
+    ) {
+        return ApiResponse.<PageResponse<CourseDetailResponse>>builder()
                 .code(HttpStatus.OK.value())
-                .result(courseService.getAll())
+                .result(courseService.getAll(page, size))
                 .build();
     }
 

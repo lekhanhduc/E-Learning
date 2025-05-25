@@ -1,11 +1,16 @@
 package vn.khanhduc.elearning.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.khanhduc.elearning.dto.request.CourseCreationRequest;
 import vn.khanhduc.elearning.dto.response.CourseCreationResponse;
 import vn.khanhduc.elearning.dto.response.CourseDetailResponse;
+import vn.khanhduc.elearning.dto.response.PageResponse;
 import vn.khanhduc.elearning.entity.Course;
 import vn.khanhduc.elearning.repository.CourseRepository;
 import vn.khanhduc.elearning.repository.UserRepository;
@@ -48,17 +53,28 @@ public class CourseService {
                 .build();
     }
 
-    public List<CourseDetailResponse> getAll() {
-        List<Course> courses = courseRepository.findAll();
-        return courses.stream().map(course -> CourseDetailResponse.builder()
+    public PageResponse<CourseDetailResponse> getAll(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "name"));
+
+        Page<Course> courses = courseRepository.findAll(pageable);
+
+        List<Course> content = courses.getContent();
+
+        return PageResponse.<CourseDetailResponse>builder()
+                .currentPage(page)
+                .size(pageable.getPageSize())
+                .totalPages(courses.getTotalPages())
+                .totalElements(courses.getTotalElements())
+                .data(content.stream().map(course -> CourseDetailResponse.builder()
                         .id(course.getId())
                         .name(course.getName())
                         .description(course.getDescription())
                         .price(course.getPrice())
                         .courseCover(course.getCourseCover())
                         .authorName(course.getAuthor().getFirstName() +" "+ course.getAuthor().getLastName())
-                        .build())
-                .toList();
+                        .build()).toList())
+                .build();
     }
 
     public String delete(Long id) {

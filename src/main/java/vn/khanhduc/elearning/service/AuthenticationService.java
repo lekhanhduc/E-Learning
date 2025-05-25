@@ -28,9 +28,6 @@ import java.util.Optional;
 @Slf4j
 public class AuthenticationService {
 
-    @Value("${jwt.secret-key}")
-    private String secretKey;
-
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final InvalidtedTokenRepository invalidtedTokenRepository;
@@ -50,7 +47,6 @@ public class AuthenticationService {
         }catch (BadCredentialsException e) {
             throw e;
         }
-
     }
 
     public void logout(String accessToken) throws ParseException {

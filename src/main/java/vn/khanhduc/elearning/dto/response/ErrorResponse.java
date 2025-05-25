@@ -10,10 +10,8 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class ErrorResponse {
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Date timestamp;
-
     private int status;
     private String error;
     private String message;

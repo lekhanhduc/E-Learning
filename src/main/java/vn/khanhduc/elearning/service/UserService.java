@@ -73,7 +73,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    @PreAuthorize("hasAuthority('USER')") // => ROLE_USER, ROLE_USER
+    @PreAuthorize("hasAuthority('ADMIN')") // => ROLE_USER, ROLE_USER
     public List<UserDetailResponse> getAllUsers(){
         return userRepository.findAll()
                 .stream()
