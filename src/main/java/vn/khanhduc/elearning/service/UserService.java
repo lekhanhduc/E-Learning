@@ -1,6 +1,8 @@
 package vn.khanhduc.elearning.service;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,16 +14,19 @@ import vn.khanhduc.elearning.entity.User;
 import vn.khanhduc.elearning.entity.UserHasRole;
 import vn.khanhduc.elearning.repository.RoleRepository;
 import vn.khanhduc.elearning.repository.UserRepository;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final MailService mailService;
 
     public UserCreationResponse createUser(UserCreationRequest request) {
         Optional<User> byEmail = userRepository.findByEmail(request.getEmail());
@@ -51,9 +56,14 @@ public class UserService {
                 .role(value)
                 .user(user)
                 .build())));
-
         userRepository.save(user);
 
+        try {
+            mailService.sendEmail("Welcome", "Chào mừng bạn đã đến với hệ thống Elearning của chúng tôi", user.getEmail());
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            log.error("SendEmail failed with email: {}",user.getEmail());
+            throw new RuntimeException(e);
+        }
         return UserCreationResponse.builder()
                 .email(user.getEmail())
                 .firstName(user.getFirstName())

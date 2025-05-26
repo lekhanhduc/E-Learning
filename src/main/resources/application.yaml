@@ -12,6 +12,18 @@ spring:
     hibernate:
       ddl-auto: update
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: duclkde170045@fpt.edu.vn
+    password: your password 
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 jwt:
   secret-key: ELN2fFMaizi8pBZNeOd51QDIM2bY1UccIpdSziPgcgSPzZ7Q7YDc5HUzewDnZpN6G7WGJZxKIqKdr3B4dIW37rwfgPYcXzrjyt2VlbmutsOsg15kQEs0No2ZHHYKLWUb2Tksu9wNuGVZkEXJ15pbRecSrOQk8t3aAxgvSyuXxOiv2vmVwx6xteH04B6C2r9Ruj8P1TTgOyIeLGX5XgPuCjNxW3e6fSMLwmSYjKR0p4F8csEolpO7YyVMlpsg4YB4
 
