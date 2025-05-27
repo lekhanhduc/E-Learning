@@ -3,9 +3,9 @@ spring:
     name: E-LEARNING
 
   datasource:
-    url: jdbc:mysql://localhost:3306/elearning
-    username: root
-    password: 123456
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/elearning
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:123456}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -15,8 +15,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: duclkde170045@fpt.edu.vn
-    password: your password 
+    username: 
+    password:
     properties:
       mail:
         smtp:
